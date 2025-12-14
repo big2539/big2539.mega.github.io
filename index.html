@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>แชร์รับเครดิตฟรี 50THB</title>
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
@@ -12,61 +12,57 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: 'Prompt', sans-serif;
     background: #000;
+    font-family: 'Prompt', sans-serif;
     overflow: hidden;
 }
 
-/* เอฟเฟกต์ไฟพื้นหลัง */
 .bg {
     position: fixed;
     inset: 0;
     background:
-      radial-gradient(circle at 20% 30%, rgba(255,215,0,.25), transparent 40%),
-      radial-gradient(circle at 80% 70%, rgba(255,140,0,.25), transparent 40%),
+      radial-gradient(circle at 30% 30%, rgba(255,215,0,.25), transparent 40%),
+      radial-gradient(circle at 70% 70%, rgba(255,140,0,.25), transparent 40%),
       linear-gradient(120deg, #000, #050505, #000);
     animation: glow 6s infinite alternate;
 }
 
 @keyframes glow {
-    0% { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(20deg); }
+    from { filter: hue-rotate(0deg); }
+    to { filter: hue-rotate(20deg); }
 }
 
 .container {
-    position: relative;
-    z-index: 2;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom);
+    box-sizing: border-box;
 }
 
 .card {
-    width: 90%;
+    width: 100%;
     max-width: 380px;
-    padding: 26px 20px;
+    background: rgba(0,0,0,.75);
     border-radius: 22px;
-    background: rgba(0,0,0,0.7);
-    box-shadow: 0 0 40px rgba(255,215,0,0.5);
+    padding: 20px;
+    box-shadow: 0 0 40px rgba(255,215,0,.45);
     text-align: center;
 }
 
 .card img {
     width: 100%;
     border-radius: 16px;
-    box-shadow: 0 0 30px rgba(255,215,0,0.9);
-    margin-bottom: 20px;
+    box-shadow: 0 0 25px rgba(255,215,0,.8);
 }
 
 h2 {
-    margin: 10px 0 18px;
-    font-size: 22px;
+    margin: 16px 0;
     color: #FFD700;
-    text-shadow: 0 0 10px rgba(255,215,0,0.8);
+    text-shadow: 0 0 10px rgba(255,215,0,.8);
 }
 
-/* ปุ่มกระพริบ */
 .btn {
     width: 100%;
     padding: 18px;
@@ -75,29 +71,22 @@ h2 {
     border-radius: 50px;
     border: none;
     cursor: pointer;
-    background: linear-gradient(135deg, #FFD700, #FF8C00);
+    background: linear-gradient(135deg,#FFD700,#FF8C00);
     color: #000;
-    animation: pulse 1.2s infinite;
-    box-shadow: 0 0 25px rgba(255,215,0,1);
-}
-
-.btn:disabled {
-    opacity: 0.6;
-    animation: none;
-    cursor: not-allowed;
+    animation: pulse 1.3s infinite;
+    box-shadow: 0 0 25px gold;
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); box-shadow: 0 0 20px gold; }
-    50% { transform: scale(1.06); box-shadow: 0 0 40px orange; }
-    100% { transform: scale(1); box-shadow: 0 0 20px gold; }
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
 .note {
-    margin-top: 14px;
+    margin-top: 12px;
     font-size: 13px;
     color: #ccc;
-    opacity: .85;
 }
 </style>
 </head>
@@ -110,23 +99,20 @@ h2 {
   <div class="card">
     <img src="https://img2.pic.in.th/pic/image---2025-12-14T123827.584.png">
     <h2>🎁 รับฟรี 50THB</h2>
-    <button class="btn" id="shareBtn" disabled>กำลังโหลด...</button>
+    <button class="btn" id="shareBtn" disabled>กำลังโหลด…</button>
     <div class="note">แชร์ให้เพื่อน / กลุ่ม LINE เท่านั้น</div>
   </div>
 </div>
 
 <script>
-let liffReady = false;
-
 async function initLIFF() {
   await liff.init({ liffId: "2008689015-NKaurxqT" });
 
   if (!liff.isInClient()) {
-    alert("กรุณาเปิดหน้านี้ผ่านแอป LINE เท่านั้น");
+    alert("กรุณาเปิดผ่านแอป LINE");
     return;
   }
 
-  liffReady = true;
   const btn = document.getElementById("shareBtn");
   btn.disabled = false;
   btn.innerText = "กดแชร์รับเครดิตฟรี";
@@ -134,94 +120,80 @@ async function initLIFF() {
 }
 
 async function shareFlex() {
-  if (!liffReady) return;
+  await liff.shareTargetPicker([
+    {
+      type: "flex",
+      altText: "🎉 รับฟรี 50THB",
+      contents: {
+        type: "bubble",
+        size: "mega",
 
-  await liff.shareTargetPicker(
-    [
-      {
-        "type": "flex",
-        "altText": "🎉 รับฟรี 50THB",
-        "contents": {
-          "type": "bubble",
-          "size": "giga",
+        hero: {
+          type: "image",
+          url: "https://img2.pic.in.th/pic/image---2025-12-14T123827.584.png",
+          size: "full",
+          aspectMode: "cover",
+          aspectRatio: "1:1"
+        },
 
-          "hero": {
-            "type": "image",
-            "url": "https://img2.pic.in.th/pic/image---2025-12-14T123827.584.png",
-            "size": "full",
-            "aspectRatio": "1:1",
-            "aspectMode": "cover"
-          },
-
-          "body": {
-            "type": "box",
-            "layout": "vertical",
-            "backgroundColor": "#111111",
-            "paddingAll": "0px",
-            "contents": [
-              {
-                "type": "box",
-                "layout": "vertical",
-                "height": "6px",
-                "background": {
-                  "type": "linearGradient",
-                  "angle": "0deg",
-                  "startColor": "#000000",
-                  "centerColor": "#FFD700",
-                  "endColor": "#000000"
+        body: {
+          type: "box",
+          layout: "vertical",
+          backgroundColor: "#111111",
+          contents: [
+            {
+              type: "box",
+              height: "5px",
+              backgroundColor: "#FFD700"
+            },
+            {
+              type: "box",
+              layout: "vertical",
+              paddingAll: "16px",
+              contents: [
+                {
+                  type: "text",
+                  text: "รับฟรี 50THB",
+                  weight: "bold",
+                  size: "xl",
+                  color: "#FFD700",
+                  align: "center"
+                },
+                {
+                  type: "text",
+                  text: "สมัครกดรับโปรโมชั่นได้ทันที",
+                  size: "sm",
+                  color: "#CCCCCC",
+                  align: "center",
+                  margin: "md"
                 }
-              },
-              {
-                "type": "box",
-                "layout": "vertical",
-                "paddingAll": "16px",
-                "contents": [
-                  {
-                    "type": "text",
-                    "text": "รับฟรี 50THB",
-                    "size": "xl",
-                    "weight": "bold",
-                    "color": "#ffce5c",
-                    "align": "center"
-                  },
-                  {
-                    "type": "text",
-                    "text": "สมัครกดรับโปรโมชั่นได้ทันที",
-                    "size": "sm",
-                    "color": "#cccccc",
-                    "align": "center",
-                    "margin": "md"
-                  }
-                ]
-              }
-            ]
-          },
+              ]
+            }
+          ]
+        },
 
-          "footer": {
-            "type": "box",
-            "layout": "vertical",
-            "backgroundColor": "#000000",
-            "contents": [
-              {
-                "type": "button",
-                "style": "primary",
-                "color": "#FFD700",
-                "action": {
-                  "type": "uri",
-                  "label": "รับฟรี 50THB",
-                  "uri": "https://lin.ee/R8XILmg"
-                }
+        footer: {
+          type: "box",
+          layout: "vertical",
+          contents: [
+            {
+              type: "button",
+              style: "primary",
+              color: "#FFD700",
+              action: {
+                type: "uri",
+                label: "รับฟรี 50THB",
+                uri: "https://lin.ee/R8XILmg"
               }
-            ]
-          }
+            }
+          ]
         }
       }
-    ],
-    {
-      isMultiple: true,
-      targetType: ["user", "group"] // 🔒 บล็อก LINE OA
     }
-  );
+  ], {
+    isMultiple: true,
+    targetType: ["user","group"]
+  });
 }
 
 initLIFF();
