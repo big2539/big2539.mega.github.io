@@ -70,6 +70,13 @@ h2 {
     cursor: pointer;
     background: linear-gradient(135deg,#FFD700,#FF8C00);
     color: #000;
+    animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+    100% { transform: scale(1); }
 }
 
 .note {
@@ -88,27 +95,24 @@ h2 {
   <div class="card">
     <img src="https://img2.pic.in.th/pic/image---2025-12-14T123827.584.png">
     <h2>🎁 รับฟรี 50THB</h2>
-    <button class="btn" id="shareBtn" disabled>กำลังโหลด…</button>
+
+    <!-- ✅ ปุ่มกดได้ทันที -->
+    <button class="btn" onclick="shareFlex()">กดแชร์รับเครดิตฟรี</button>
+
     <div class="note">แชร์ให้เพื่อน / กลุ่ม LINE เท่านั้น</div>
   </div>
 </div>
 
 <script>
-async function initLIFF() {
-  await liff.init({ liffId: "2008689015-NKaurxqT" });
+liff.init({ liffId: "2008689015-NKaurxqT" });
+
+async function shareFlex() {
 
   if (!liff.isInClient()) {
     alert("กรุณาเปิดผ่านแอป LINE เท่านั้น");
     return;
   }
 
-  const btn = document.getElementById("shareBtn");
-  btn.disabled = false;
-  btn.innerText = "กดแชร์รับเครดิตฟรี";
-  btn.onclick = shareFlex;
-}
-
-async function shareFlex() {
   try {
     const result = await liff.shareTargetPicker(
       [{
@@ -129,60 +133,3 @@ async function shareFlex() {
           body: {
             type: "box",
             layout: "vertical",
-            backgroundColor: "#111111",
-            paddingAll: "16px",
-            spacing: "md",
-            contents: [
-              {
-                type: "text",
-                text: "🎁 แจกทุนฟรี 50THB",
-                size: "xl",
-                weight: "bold",
-                color: "#FFD700",
-                align: "center"
-              },
-              {
-                type: "text",
-                text: "สมัครกดรับโปรโมชั่นได้ทันที\nไม่ต้องฝาก • ถอนได้จริง",
-                size: "sm",
-                color: "#CCCCCC",
-                align: "center",
-                wrap: true
-              }
-            ]
-          },
-
-          footer: {
-            type: "box",
-            layout: "vertical",
-            backgroundColor: "#000000",
-            contents: [{
-              type: "button",
-              style: "primary",
-              color: "#FFD700",
-              action: {
-                type: "uri",
-                label: "รับฟรี 50THB",
-                uri: "https://lin.ee/R8XILmg"
-              }
-            }]
-          }
-        }
-      }],
-      { isMultiple: true }
-    );
-
-    if (result) {
-      alert("✅ แชร์สำเร็จ!");
-      liff.closeWindow();
-    }
-  } catch {
-    alert("ยกเลิกการแชร์");
-  }
-}
-
-initLIFF();
-</script>
-
-</body>
-</html>
