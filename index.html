@@ -81,6 +81,12 @@ h2 {
     box-shadow: 0 0 25px rgba(255,215,0,1);
 }
 
+.btn:disabled {
+    opacity: 0.6;
+    animation: none;
+    cursor: not-allowed;
+}
+
 @keyframes pulse {
     0% { transform: scale(1); box-shadow: 0 0 20px gold; }
     50% { transform: scale(1.06); box-shadow: 0 0 40px orange; }
@@ -104,13 +110,32 @@ h2 {
   <div class="card">
     <img src="https://img2.pic.in.th/pic/image---2025-12-14T123827.584.png">
     <h2>🎁 รับฟรี 50THB</h2>
-    <button class="btn" onclick="shareFlex()">กดแชร์รับเครดิตฟรี</button>
-    <div class="note">แชร์ให้เพื่อน / กลุ่ม LINE ให้ครบตามเงื่อนไข </div>
+    <button class="btn" id="shareBtn" disabled>กำลังโหลด...</button>
+    <div class="note">แชร์ให้เพื่อน / กลุ่ม LINE เท่านั้น</div>
   </div>
 </div>
 
 <script>
+let liffReady = false;
+
+async function initLIFF() {
+  await liff.init({ liffId: "2008689015-NKaurxqT" });
+
+  if (!liff.isInClient()) {
+    alert("กรุณาเปิดหน้านี้ผ่านแอป LINE เท่านั้น");
+    return;
+  }
+
+  liffReady = true;
+  const btn = document.getElementById("shareBtn");
+  btn.disabled = false;
+  btn.innerText = "กดแชร์รับเครดิตฟรี";
+  btn.onclick = shareFlex;
+}
+
 async function shareFlex() {
+  if (!liffReady) return;
+
   await liff.shareTargetPicker(
     [
       {
@@ -134,8 +159,6 @@ async function shareFlex() {
             "backgroundColor": "#111111",
             "paddingAll": "0px",
             "contents": [
-
-              /* ✨ เส้นคั่น Glow ใต้รูป */
               {
                 "type": "box",
                 "layout": "vertical",
@@ -148,7 +171,6 @@ async function shareFlex() {
                   "endColor": "#000000"
                 }
               },
-
               {
                 "type": "box",
                 "layout": "vertical",
@@ -178,13 +200,11 @@ async function shareFlex() {
           "footer": {
             "type": "box",
             "layout": "vertical",
-            "spacing": "sm",
             "backgroundColor": "#000000",
             "contents": [
               {
                 "type": "button",
                 "style": "primary",
-                "height": "md",
                 "color": "#FFD700",
                 "action": {
                   "type": "uri",
@@ -204,9 +224,7 @@ async function shareFlex() {
   );
 }
 
-liff.init({
-  liffId: "2008689015-NKaurxqT"
-});
+initLIFF();
 </script>
 
 </body>
