@@ -17,6 +17,7 @@ html, body {
     overflow: hidden;
 }
 
+/* ===== Background ===== */
 .bg {
     position: fixed;
     inset: 0;
@@ -24,15 +25,19 @@ html, body {
       radial-gradient(circle at 20% 30%, rgba(255,215,0,.25), transparent 40%),
       radial-gradient(circle at 80% 70%, rgba(255,140,0,.25), transparent 40%),
       linear-gradient(120deg, #000, #050505, #000);
-    animation: moveBg 6s infinite alternate;
+    animation: bgPulse 6s ease-in-out infinite;
 }
 
-@keyframes moveBg {
-    from { filter: hue-rotate(0deg); }
-    to { filter: hue-rotate(20deg); }
+@keyframes bgPulse {
+    0% { filter: hue-rotate(0deg); transform: scale(1); }
+    50% { filter: hue-rotate(18deg); transform: scale(1.02); }
+    100% { filter: hue-rotate(0deg); transform: scale(1); }
 }
 
+/* ===== Layout ===== */
 .container {
+    position: relative;
+    z-index: 2;
     height: 100%;
     display: flex;
     align-items: center;
@@ -42,24 +47,43 @@ html, body {
 .card {
     width: 90%;
     max-width: 380px;
-    padding: 26px 20px;
+    padding: 24px 18px;
     border-radius: 22px;
-    background: rgba(0,0,0,0.75);
-    box-shadow: 0 0 40px rgba(255,215,0,.5);
+    background: rgba(0,0,0,0.78);
+    box-shadow: 0 0 40px rgba(255,215,0,.45);
     text-align: center;
 }
 
-.card img {
+/* ===== Image Fade + Pop Sync ===== */
+.pop-sync {
     width: 100%;
     border-radius: 16px;
+    opacity: 0;
+    transform: scale(0.96);
+    transition: opacity .6s ease;
     box-shadow: 0 0 30px rgba(255,215,0,.9);
-    margin-bottom: 18px;
+}
+
+.pop-sync.loaded {
+    opacity: 1;
+    animation: syncPop 6s ease-in-out infinite;
+}
+
+@keyframes syncPop {
+    0%   { transform: scale(1); }
+    45%  { transform: scale(1); }
+    50%  { transform: scale(1.045); }
+    55%  { transform: scale(1); }
+    100% { transform: scale(1); }
 }
 
 h2 {
     color: #FFD700;
+    text-shadow: 0 0 10px rgba(255,215,0,.8);
+    margin: 16px 0 12px;
 }
 
+/* ===== Button ===== */
 .btn {
     width: 100%;
     padding: 18px;
@@ -93,43 +117,116 @@ h2 {
 
 <div class="container">
   <div class="card">
-    <img src="https://img2.pic.in.th/pic/image---2025-12-14T123827.584.png">
+
+    <img
+      src="https://img2.pic.in.th/pic/image---2025-12-14T123827.584.png"
+      class="pop-sync"
+      loading="eager"
+      decoding="async"
+      onload="this.classList.add('loaded')"
+    >
+
     <h2>🎁 รับฟรี 50THB</h2>
 
-    <!-- ✅ ปุ่มกดได้ทันที -->
-    <button class="btn" onclick="shareFlex()">กดแชร์รับเครดิตฟรี</button>
+    <button class="btn" onclick="shareFlex()">
+      กดแชร์รับเครดิตฟรี
+    </button>
 
-    <div class="note">แชร์ให้เพื่อน / กลุ่ม LINE เท่านั้น</div>
+    <div class="note">แชร์ให้เพื่อนหรือกลุ่ม LINE เท่านั้น</div>
   </div>
 </div>
 
 <script>
-liff.init({ liffId: "2008689015-NKaurxqT" });
+async function initLIFF() {
+  try {
+    await liff.init({ liffId: "2008689015-NKaurxqT" });
+
+    if (!liff.isInClient()) {
+      alert("กรุณาเปิดผ่านแอป LINE เท่านั้น");
+    }
+  } catch (e) {
+    alert("LIFF init error");
+  }
+}
 
 async function shareFlex() {
-
-  if (!liff.isInClient()) {
-    alert("กรุณาเปิดผ่านแอป LINE เท่านั้น");
-    return;
-  }
-
   try {
-    const result = await liff.shareTargetPicker(
-      [{
-        type: "flex",
-        altText: "🎉 รับฟรี 50THB",
-        contents: {
-          type: "bubble",
-          size: "mega",
+    await liff.shareTargetPicker(
+      [
+        {
+          type: "flex",
+          altText: "🎉 รับฟรี 50THB",
+          contents: {
+            type: "bubble",
+            size: "mega",
+            hero: {
+              type: "image",
+              url: "https://img2.pic.in.th/pic/image---2025-12-14T123827.584.png",
+              size: "full",
+              aspectMode: "cover",
+              aspectRatio: "1:1"
+            },
+            body: {
+              type: "box",
+              layout: "vertical",
+              backgroundColor: "#111111",
+              paddingAll: "16px",
+              spacing: "md",
+              contents: [
+                {
+                  type: "text",
+                  text: "🎁 รับฟรี 50THB",
+                  weight: "bold",
+                  size: "xl",
+                  color: "#FFD700",
+                  align: "center"
+                },
+                {
+                  type: "text",
+                  text: "สมัครกดรับโปรโมชั่นได้ทันที\nไม่ต้องฝาก • ถอนได้จริง",
+                  size: "sm",
+                  color: "#CCCCCC",
+                  align: "center",
+                  wrap: true
+                }
+              ]
+            },
+            footer: {
+              type: "box",
+              layout: "vertical",
+              backgroundColor: "#000000",
+              contents: [
+                {
+                  type: "button",
+                  style: "primary",
+                  color: "#FFD700",
+                  action: {
+                    type: "uri",
+                    label: "รับฟรี 50THB",
+                    uri: "https://lin.ee/R8XILmg"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ],
+      {
+        isMultiple: true,
+        targetType: ["user", "group"]
+      }
+    );
 
-          hero: {
-            type: "image",
-            url: "https://img2.pic.in.th/pic/image---2025-12-14T123827.584.png",
-            size: "full",
-            aspectRatio: "1:1",
-            aspectMode: "cover"
-          },
+    alert("✅ แชร์สำเร็จ!\nแคปหน้าจอส่งแอดมินได้เลย");
+    liff.closeWindow();
 
-          body: {
-            type: "box",
-            layout: "vertical",
+  } catch (err) {
+    alert("ยกเลิกการแชร์");
+  }
+}
+
+initLIFF();
+</script>
+
+</body>
+</html>
