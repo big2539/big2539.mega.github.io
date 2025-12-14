@@ -77,6 +77,11 @@ h2 {
     box-shadow: 0 0 25px gold;
 }
 
+.btn:disabled {
+    opacity: .6;
+    animation: none;
+}
+
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.05); }
@@ -109,7 +114,7 @@ async function initLIFF() {
   await liff.init({ liffId: "2008689015-NKaurxqT" });
 
   if (!liff.isInClient()) {
-    alert("กรุณาเปิดผ่านแอป LINE");
+    alert("กรุณาเปิดผ่านแอป LINE เท่านั้น");
     return;
   }
 
@@ -120,80 +125,102 @@ async function initLIFF() {
 }
 
 async function shareFlex() {
-  await liff.shareTargetPicker([
-    {
-      type: "flex",
-      altText: "🎉 รับฟรี 50THB",
-      contents: {
-        type: "bubble",
-        size: "mega",
+  try {
+    const result = await liff.shareTargetPicker(
+      [
+        {
+          type: "flex",
+          altText: "🎉 รับฟรี 50THB",
+          contents: {
+            type: "bubble",
+            size: "mega",
 
-        hero: {
-          type: "image",
-          url: "https://img2.pic.in.th/pic/image---2025-12-14T123827.584.png",
-          size: "full",
-          aspectMode: "cover",
-          aspectRatio: "1:1"
-        },
-
-        body: {
-          type: "box",
-          layout: "vertical",
-          backgroundColor: "#111111",
-          contents: [
-            {
-              type: "box",
-              height: "5px",
-              backgroundColor: "#FFD700"
+            hero: {
+              type: "image",
+              url: "https://img2.pic.in.th/pic/image---2025-12-14T123827.584.png",
+              size: "full",
+              aspectMode: "cover",
+              aspectRatio: "1:1"
             },
-            {
+
+            body: {
               type: "box",
               layout: "vertical",
-              paddingAll: "16px",
+              backgroundColor: "#111111",
+              paddingAll: "0px",
               contents: [
                 {
-                  type: "text",
-                  text: "รับฟรี 50THB",
-                  weight: "bold",
-                  size: "xl",
-                  color: "#FFD700",
-                  align: "center"
+                  type: "box",
+                  height: "6px",
+                  background: {
+                    type: "linearGradient",
+                    angle: "0deg",
+                    startColor: "#000000",
+                    centerColor: "#FFD700",
+                    endColor: "#000000"
+                  }
                 },
                 {
-                  type: "text",
-                  text: "สมัครกดรับโปรโมชั่นได้ทันที",
-                  size: "sm",
-                  color: "#CCCCCC",
-                  align: "center",
-                  margin: "md"
+                  type: "box",
+                  layout: "vertical",
+                  paddingAll: "16px",
+                  spacing: "md",
+                  contents: [
+                    {
+                      type: "text",
+                      text: "🎁 รับฟรี 50THB",
+                      weight: "bold",
+                      size: "xl",
+                      color: "#FFD700",
+                      align: "center"
+                    },
+                    {
+                      type: "text",
+                      text: "สมัครกดรับโปรโมชั่นได้ทันทีไม่ต้องฝาก",
+                      size: "sm",
+                      color: "#CCCCCC",
+                      align: "center",
+                      wrap: true
+                    }
+                  ]
+                }
+              ]
+            },
+
+            footer: {
+              type: "box",
+              layout: "vertical",
+              backgroundColor: "#000000",
+              contents: [
+                {
+                  type: "button",
+                  style: "primary",
+                  color: "#FFD700",
+                  action: {
+                    type: "uri",
+                    label: "รับฟรี 50THB",
+                    uri: "https://lin.ee/R8XILmg"
+                  }
                 }
               ]
             }
-          ]
-        },
-
-        footer: {
-          type: "box",
-          layout: "vertical",
-          contents: [
-            {
-              type: "button",
-              style: "primary",
-              color: "#FFD700",
-              action: {
-                type: "uri",
-                label: "รับฟรี 50THB",
-                uri: "https://lin.ee/R8XILmg"
-              }
-            }
-          ]
+          }
         }
+      ],
+      {
+        isMultiple: true,
+        targetType: ["user", "group"]
       }
+    );
+
+    if (result) {
+      alert("✅ แชร์สำเร็จ!\nแคปหน้าจอส่งแอดมินแล้วรอรับโค้ดได้เลย");
+      liff.closeWindow();
     }
-  ], {
-    isMultiple: true,
-    targetType: ["user","group"]
-  });
+
+  } catch (err) {
+    alert("ยกเลิกการแชร์");
+  }
 }
 
 initLIFF();
